@@ -3,6 +3,7 @@ import json
 from flask import Flask, request, abort
 import functools
 import time
+import csv
 
 """create the application object"""
 app = Flask(__name__)
@@ -13,6 +14,8 @@ BUFFER_SIZE = 4096
 
 orderProj = []
 customers = {}
+sumIncome = 0
+sumCustomer = 0
 
 """decorator to check the runtime of the decorated function"""
 def timer(func):
@@ -30,10 +33,10 @@ def timer(func):
 """decorator to check that the server get wrong data"""
 @timer
 @app.route("/grade", methods=["POST"])
-def check_jsondata(json_data):
+def check_jsondata(json_data, menu):
 
     if "local_ip" not in json_data:
-        abort(400) #stop the code, maybe this is too strong error
+        abort(400)  # stop the code, maybe this is too strong error
 
     try:
         if(len(json_data.keys()) < 2):
@@ -52,7 +55,14 @@ def check_jsondata(json_data):
 """use generator for get the cost of the order"""
 def getCost(json_data, menu):
     costs = (menu.get(key) * value for key, value in json_data.items() if menu.__contains__(key))
-    print("Cost of the order: ", sum(costs))
+    ordersum = sum(costs)
+    print("Cost of the order: ", ordersum)
+
+    global sumCustomer
+    global sumIncome
+
+    sumIncome += ordersum
+    sumCustomer +=1
 
 """customer client"""
 # communicate with customerClient.py
@@ -70,7 +80,7 @@ def customerClient(conn, addr, menu):
 
     # decorator to check the runtime of the decorated function
     # decorator to check that the server get wrong data
-    check_jsondata(json_data)
+    check_jsondata(json_data, menu)
 
     # set ordernumber
     setOrderNumber(conn, addr)
@@ -129,10 +139,16 @@ def server_socket(menu):
 
                 break;
 
-menu = {
-    'Hamburger': 400,
-    'Krumpli': 300,
-    'Cola': 300
-}
+def load_menu(filename):
+    menu = {}
+    with open(filename, newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            menu[row[0]] = int(row[1])
+    return menu
 
-server_socket(menu)
+def print_sum():
+    print('Daily income: ', sumIncome)
+    print('Number of the orders: ', sumCustomer)
+
+server_socket(load_menu('menu.txt'))

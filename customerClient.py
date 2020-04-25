@@ -7,6 +7,11 @@ PORT = 8192         # The port used by the server
 """order"""
 def json_message():
     local_ip = socket.gethostbyname(socket.gethostname())
+
+    message(generateOrder(local_ip))
+
+
+def generateOrder(local_ip):
     data = {
         'local_ip': local_ip,
         'Hamburger': 2,
@@ -15,8 +20,6 @@ def json_message():
     }
 
     json_data = json.dumps(data)
-
-    message(json_data)
 
     return json_data
 
@@ -41,4 +44,5 @@ def message(data):
         orderNum = orderNum.decode('utf-8')
         print('OrderNum: ', orderNum)
 
-json_message()
+if __name__ == '__main__':
+    json_message()
