@@ -138,6 +138,7 @@ def server_socket(menu):
                     print("Not waited client")
 
                 break;
+        print_sum()
 
 def load_menu(filename):
     menu = {}
