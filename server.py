@@ -5,6 +5,8 @@ import functools
 import time
 import csv
 
+import readFile
+
 """create the application object"""
 app = Flask(__name__)
 
@@ -113,6 +115,7 @@ def setOrderNumber(conn, addr):
 
 """server socket accept"""
 def server_socket(menu):
+    print(menu)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST,PORT))
@@ -138,18 +141,9 @@ def server_socket(menu):
                     print("Not waited client")
 
                 break;
-    print_sum()
-
-def load_menu(filename):
-    menu = {}
-    with open(filename, newline='') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            menu[row[0]] = int(row[1])
-    return menu
 
 def print_sum():
     print('Daily income: ', sumIncome)
     print('Number of the orders: ', sumCustomer)
 
-server_socket(load_menu('menu.txt'))
+server_socket(readFile.load_menu('menu.txt'))
