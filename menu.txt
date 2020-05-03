@@ -1,3 +1,0 @@
-Hamburger,400
-Krumpli,300
-Cola,300

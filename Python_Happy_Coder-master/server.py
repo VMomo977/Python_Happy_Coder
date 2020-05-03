@@ -1,5 +1,7 @@
 import socket
 import json
+import sys
+
 from flask import Flask, request, abort
 import functools
 import time
@@ -134,11 +136,12 @@ def server_socket(menu):
                 elif conn_type == 'I am an order projector':
                     global orderProj
                     orderProj = [conn, addr]
+                elif conn_type == 'End of the day':
+                    server_exit()
                 else:
                     print("Not waited client")
 
                 break;
-    print_sum()
 
 def load_menu(filename):
     menu = {}
@@ -151,5 +154,10 @@ def load_menu(filename):
 def print_sum():
     print('Daily income: ', sumIncome)
     print('Number of the orders: ', sumCustomer)
+
+def server_exit():
+    print_sum()
+    input("Press Enter to exit...")
+    sys.exit(0)
 
 server_socket(load_menu('menu.txt'))
