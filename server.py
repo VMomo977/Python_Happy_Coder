@@ -147,4 +147,10 @@ def server_socket(menu):
 def print_sum():
     print('Daily income: ', sumIncome)
     print('Number of the orders: ', sumCustomer)
+
+def server_exit():
+    print_sum()
+    input("Press Enter to exit...")
+    sys.exit(0)
+
 server_socket(readFile.load_menu('menu.txt'))
