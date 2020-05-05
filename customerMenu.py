@@ -20,23 +20,27 @@ class ScrollGridLayout(GridLayout):
 class OrderNumClass():
     orderNum = 0
 
-    # set layouts, widgets
-    widget_main = Widget()
 
-    scroll_grid_layout =  ScrollGridLayout()
-
-    scroll_grid_layout.bind(minimum_height=scroll_grid_layout.setter('height'))
-
-    scrollview = ScrollView(effect_cls='ScrollEffect', size_hint=(1, None), size=(Window.width, Window.height))
-
-    scrollview.add_widget(scroll_grid_layout)
-
-    widget_main.add_widget(scrollview)
 
     def __init__(self, **kwargs):
         super(OrderNumClass,self).__init__(**kwargs)
-        self.menu = {'Hamburger': 400, 'Krumpli': 300, 'Cola': 300}
-        self.addProduct(self.menu)
+        """Widgets"""
+        # set layouts, widgets
+        self.widget_main = Widget()
+
+        self.scroll_grid_layout = ScrollGridLayout()
+
+        self.scroll_grid_layout.bind(minimum_height=self.scroll_grid_layout.setter('height'))
+
+        self.scrollview = ScrollView(effect_cls='ScrollEffect', size_hint=(1, None), size=(Window.width, Window.height))
+
+        self.scrollview.add_widget(self.scroll_grid_layout)
+
+        self.widget_main.add_widget(self.scrollview)
+
+        """server-client thread"""
+        Thread(target=self.connectToTheServer).start()
+
 
     def addProduct(self, menu):
 
@@ -48,9 +52,42 @@ class OrderNumClass():
             )
             self.scroll_grid_layout.add_widget(btn)
 
+    """order"""
+    def generateOrder(self, sock):
+        local_ip = sock.local_ip
+        order_list = {
+            'local_ip': local_ip,
+            'Hamburger': 2,
+            'Krumpli': 2,
+            'Cola': 3
+        }
+        json_data = json.dumps(order_list)
+        return json_data
+
+    def connectToTheServer(self):
+        sock = MySocket()
+
+        sock.send_data('I am a customer'.encode())
+
+        """receive menu from server"""
+        menu = json.loads(sock.get_data().decode("utf-8"))
+        print("Server send the menu: %s" % menu)
+
+        """Menu GUI"""
+        self.addProduct(menu)
+
+        """send the order list with food, drink"""
+        # it should send the json size too
+        data = self.generateOrder(sock)
+        sock.send_data(data.encode())
+
+        """receive orderNum"""
+        orderNum = sock.get_data().decode('utf-8')
+        print('OrderNum: ', orderNum)
+
 
 class OrderNumApp(App):
-    title = "Ordernum Projector"
+    title = "Customer Menu"
 
     def build(self):
         orderScreen = OrderNumClass()
