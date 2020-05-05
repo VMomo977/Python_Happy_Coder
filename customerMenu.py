@@ -17,13 +17,10 @@ class ScrollGridLayout(GridLayout):
         self.height=self.minimum_height
         self.cols=2
 
-class OrderNumClass():
-    orderNum = 0
-
-
+class CustomerClass():
 
     def __init__(self, **kwargs):
-        super(OrderNumClass,self).__init__(**kwargs)
+        super(CustomerClass,self).__init__(**kwargs)
         """Widgets"""
         # set layouts, widgets
         self.widget_main = Widget()
@@ -86,12 +83,12 @@ class OrderNumClass():
         print('OrderNum: ', orderNum)
 
 
-class OrderNumApp(App):
+class CustomerApp(App):
     title = "Customer Menu"
 
     def build(self):
-        orderScreen = OrderNumClass()
-        return orderScreen.widget_main
+        customerScreen = CustomerClass()
+        return customerScreen.widget_main
 
 if __name__ == '__main__':
-    OrderNumApp().run()
+    CustomerApp().run()
