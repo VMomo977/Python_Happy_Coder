@@ -48,9 +48,6 @@ def check_jsondata(json_data, menu):
 
             # use generator for get the cost of the order
             getCost(json_data, menu)
-
-
-
     except ValueError as vr:
         print('\033[91m', "Received error:",  vr , '\033[0m')
 
@@ -77,7 +74,7 @@ def customerClient(conn, addr, menu):
     # it depends on buffer_size
     request_data = conn.recv(BUFFER_SIZE)
 
-    # it should containt the json size too
+    # it should contain the json size too
     json_data = json.loads(request_data.decode('utf-8'))
 
     # decorator to check the runtime of the decorated function
@@ -86,6 +83,8 @@ def customerClient(conn, addr, menu):
 
     # set ordernumber
     setOrderNumber(conn, addr)
+
+
 
 # communicate with orderNumClient.py
 def setOrderNumber(conn, addr):
