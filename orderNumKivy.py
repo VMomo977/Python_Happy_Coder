@@ -96,7 +96,8 @@ def connectToServer():
 
         # send customer addr, ordertype, orderNum to the server
         server_orderNum = {
-            'addr': server_msg['addr'],
+            'addr0': server_msg['addr0'],
+            'addr1': server_msg['addr1'],
             'ordertype': 'in progress',
             'orderNum': orderNum
         }

@@ -44,21 +44,22 @@ class CustomerClass():
         self.finish_order_list = False
 
     def addToOrderList(self, instance):
-        key = instance.text
+        # 'Cola: 300': 1 -> cut the price
+        key = instance.text.split(':')[0]
         if self.order_list.__contains__(key):
             self.order_list[key] += 1
-            print(key, " ",self.order_list[key])
+            print("Buy the customer: ", key, " item: ",self.order_list[key])
         else:
             self.order_list[key] = 1
-            print(key, " ", self.order_list[key])
+            print("Buy the customer: ", key, " item: ", self.order_list[key])
 
 
     def addProduct(self, menu, sock):
 
         for key in menu.keys():
-            print(key)
+
             product =Button(
-                text=key,
+                text=key + ": " + str(menu[key]),
                 size_hint_y=None,
                 height=40
             )
@@ -76,10 +77,7 @@ class CustomerClass():
         self.scroll_grid_layout.add_widget(send_order_list)
 
     """order"""
-
     def generateOrder(self, sock):
-
-        print("sock", sock)
         local_ip = sock.local_ip
         """
             order_list = {

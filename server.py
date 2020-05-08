@@ -28,7 +28,7 @@ class ServerClass():
             if(len(json_data.keys()) < 2):
                 raise ValueError("Number of keys in request can't be less than 2")
             else:
-                print("Data: %s" % json_data)
+                print("Orderlist from customer: %s" % json_data)
 
                 # use generator for get the cost of the order
                 self.getCost(json_data, menu)
@@ -67,10 +67,9 @@ class ServerClass():
 
     # communicate with orderNumClient.py
     def setOrderNumber(self, addr):
-        print("setOrderNumber")
-
         data = {
-            'addr': addr[1],
+            'addr0': addr[0],
+            'addr1': addr[1],
             'ordertype': 'order'
         }
 
@@ -84,10 +83,12 @@ class ServerClass():
         print("OrderNum: %s" % msg)
 
         # send the client the orderNum
-        cust_addr = msg['addr']
+        cust_addr0 = msg['addr0']
+        cust_addr1 = msg['addr1']
         cust_orderNum = str( msg['orderNum'] )
 
-        cust_conn = self.customers.get(cust_addr)
+        # if we use only own computer for test, that the addr1 (id) is the distinguishable data, not the addr0
+        cust_conn = self.customers.get(cust_addr0).get(cust_addr1)
         cust_conn.send(cust_orderNum.encode())
 
 
@@ -99,16 +100,19 @@ class ServerClass():
             s.bind((self.HOST,self.PORT))
             s.listen()
             while 1: # Accept connections from multiple clients
-                print('Listening for client...')
+                print('\nListening for client...')
                 conn, addr = s.accept()
-                print('Connection address:', addr)
+                print('\nConnection address:', addr)
                 while 1: # Accept multiple messages from each client
                     # receive
                     conn_type = conn.recv(self.BUFFER_SIZE)
                     conn_type = conn_type.decode('utf-8')
                     print("Client: ", conn_type)
                     if conn_type == 'I am a customer':
-                        self.customers[addr[1]] = conn
+                        # if we use only own computer for test, that the addr1 (id) is the distinguishable data, not the addr0
+                        tmp = {}
+                        tmp[addr[1]] = conn
+                        self.customers[addr[0]] = tmp
 
                         self.customerClient(conn, addr, menu)
                     elif conn_type == 'I am an order projector':
@@ -121,12 +125,12 @@ class ServerClass():
                     break;
 
     def print_sum(self):
-        print('Daily income: ', self.sumIncome)
+        print('\nDaily income: ', self.sumIncome)
         print('Number of the orders: ', self.sumCustomer)
 
     def server_exit(self):
         self.print_sum()
-        input("Press Enter to exit...")
+        input("\nPress Enter to exit...")
         sys.exit(0)
 
 if __name__ == '__main__':
