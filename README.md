@@ -17,5 +17,6 @@ University task
     Number of the orders:  <number>'
     
 data on the server's console.
+
 12. close the orderNumKivy.py
 13. enter on the server.py's console
