@@ -13,10 +13,11 @@ University task
 10. on the 'Ordernum Projector' you can click enter then you can switch between kitchen screen and simple ordernum projector screen
 11. if you click on 'End day' button of 'Ordernum Projector' then you can see 
 
-    'Daily income:  <number>
-    Number of the orders:  <number>'
+    'Daily income:  number
     
-data on the server's console.
+    Number of the orders:  number'
+    
+    data on the server's console.
 
 12. close the orderNumKivy.py
 13. enter on the server.py's console
