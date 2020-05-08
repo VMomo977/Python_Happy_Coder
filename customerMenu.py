@@ -1,4 +1,5 @@
 import json
+import time
 from typing import Any
 
 from kivy.app import App
@@ -75,7 +76,6 @@ class CustomerClass():
         self.scroll_grid_layout.add_widget(send_order_list)
 
     """order"""
-
     def generateOrder(self, local_ip):
 
         """
@@ -113,8 +113,8 @@ def connectToTheServer(screen):
     """Menu GUI"""
     screen.addProduct(menu, sock)
     while(screen.finish_order_list != True):
-        tmp = ("Waiting") #it need some sleeping
-        #print("Wait the client finish the order list")
+        time.sleep(0.1)
+
     print("The client will send the order to the server")
     json_data = screen.generateOrder(sock.local_ip)
     screen.sendOrder(sock, json_data)
