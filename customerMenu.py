@@ -9,7 +9,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.widget import Widget
 from functools import partial
 
-from orderNumClient import *
+from customerClient import *
 from threading import Thread
 
 class ScrollGridLayout(GridLayout):
