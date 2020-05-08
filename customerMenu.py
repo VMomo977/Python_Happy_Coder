@@ -38,8 +38,6 @@ class CustomerClass():
 
         self.widget_main.add_widget(self.scrollview)
 
-        """server-client thread"""
-        Thread(target=self.connectToTheServer).start()
         self.order_list = {}
         self.finish_order_list = False
 
@@ -77,10 +75,8 @@ class CustomerClass():
 
     """order"""
 
-    def generateOrder(self, sock):
+    def generateOrder(self, local_ip):
 
-        print("sock", sock)
-        local_ip = sock.local_ip
         """
             order_list = {
             'local_ip': local_ip,
@@ -93,7 +89,10 @@ class CustomerClass():
 
         print("Orderlist: %s"% self.order_list)
         json_data = json.dumps(self.order_list)
-        sock.send_data(json_data.encode())
+        return json_data
+
+    def sendOrder(self, sock, data):
+        sock.send_data(data.encode())
 
         """receive orderNum"""
         orderNum = sock.get_data().decode('utf-8')
@@ -101,28 +100,33 @@ class CustomerClass():
 
         App.get_running_app().stop()
 
-    def connectToTheServer(self):
-        sock = MySocket()
+def connectToTheServer(screen):
+    sock = MySocket()
 
-        sock.send_data('I am a customer'.encode())
+    sock.send_data('I am a customer'.encode())
 
-        """receive menu from server"""
-        menu = json.loads(sock.get_data().decode("utf-8"))
-        print("Server send the menu: %s" % menu)
+    """receive menu from server"""
+    menu = json.loads(sock.get_data().decode("utf-8"))
+    print("Server send the menu: %s" % menu)
 
-        """Menu GUI"""
-        self.addProduct(menu, sock)
-        while(self.finish_order_list != True):
-            tmp = ("Waiting") #it need some sleeping
-            #print("Wait the client finish the order list")
-        print("The client will send the order to the server")
-        self.generateOrder(sock)
+    """Menu GUI"""
+    screen.addProduct(menu, sock)
+    while(screen.finish_order_list != True):
+        tmp = ("Waiting") #it need some sleeping
+        #print("Wait the client finish the order list")
+    print("The client will send the order to the server")
+    json_data = screen.generateOrder(sock.local_ip)
+    screen.sendOrder(sock, json_data)
 
 class CustomerApp(App):
     title = "Customer Menu"
 
     def build(self):
         customerScreen = CustomerClass()
+
+        """server-client thread"""
+        Thread(target=connectToTheServer, args=[customerScreen]).start()
+
         return customerScreen.widget_main
 
 if __name__ == '__main__':
